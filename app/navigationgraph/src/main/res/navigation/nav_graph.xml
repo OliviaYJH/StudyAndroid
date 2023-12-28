@@ -14,8 +14,13 @@
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank">
         <action
-            android:id="@+id/action_blankFragment_to_blankFragment02"
-            app:destination="@id/blankFragment02" />
+            android:id="@+id/next_action"
+            app:destination="@id/blankFragment02"
+
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -23,5 +28,12 @@
         android:name="com.example.navigationgraph.BlankFragment2"
         android:label="fragment_blank2"
         tools:layout="@layout/fragment_blank2"/>
+    <action
+        android:id="@+id/before_action"
+        app:destination="@+id/blankFragment"
 
+        app:enterAnim="@anim/slide_in_left"
+        app:exitAnim="@anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left"/>
 </navigation>

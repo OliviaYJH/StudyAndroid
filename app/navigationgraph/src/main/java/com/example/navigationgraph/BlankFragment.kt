@@ -25,7 +25,8 @@ class BlankFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.firstButton.setOnClickListener {
-            findNavController().navigate(R.id.blankFragment02)
+            // 목적지가 아닌 액션을 매개변수로 전달
+            findNavController().navigate(R.id.next_action, null)
         }
     }
 
