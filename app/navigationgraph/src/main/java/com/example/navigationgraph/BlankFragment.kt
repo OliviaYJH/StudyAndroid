@@ -26,7 +26,9 @@ class BlankFragment : Fragment() {
 
         binding.firstButton.setOnClickListener {
             // 목적지가 아닌 액션을 매개변수로 전달
-            findNavController().navigate(BlankFragmentDirections.nextAction(30.toString()))
+            findNavController().navigate(BlankFragmentDirections.nextAction().apply {
+                blankArgNumber = "hello"
+            })
         }
     }
 

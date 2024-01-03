@@ -31,6 +31,7 @@
         <argument
             android:name="blank_arg_number"
             app:argType="string"
+            android:defaultValue="hi"
             />
         <action
             android:id="@+id/before_action"
