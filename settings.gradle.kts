@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "StudyAndroid"
 include(":app")
 include(":app:navigationgraph")
+include(":app:binding")
