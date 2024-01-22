@@ -1,10 +1,15 @@
 package com.example.stopwatch
 
+import android.media.AudioManager
+import android.media.ToneGenerator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import com.example.stopwatch.databinding.ActivityStopWatchBinding
 import com.example.stopwatch.databinding.DialogCountdownSettingBinding
 import java.util.Timer
@@ -95,7 +100,8 @@ class StopWatchActivity : AppCompatActivity() {
                 // count down
                 currentCountdownDeciSecond -= 1
                 val seconds = currentCountdownDeciSecond / 10
-                val progress = currentCountdownDeciSecond / (countDownSecond * 10f) * 100 // 백분율 float 형
+                val progress =
+                    currentCountdownDeciSecond / (countDownSecond * 10f) * 100 // 백분율 float 형
 
                 // View에서 post하는 방법
                 binding.root.post {
@@ -103,6 +109,15 @@ class StopWatchActivity : AppCompatActivity() {
                     binding.tvCountDown.text = String.format("%02d", seconds)
                     binding.pbCountDown.progress = progress.toInt()
                 }
+
+            }
+
+            if (currentDeciSecond == 0 && currentCountdownDeciSecond < 31 && currentCountdownDeciSecond % 10 == 0) { // 3초 전부터 딱 떨어지는 시점에 실행됨
+                // beep sound on
+                Log.d("ToneType", "Success")
+                val toneType = if (currentCountdownDeciSecond == 0) ToneGenerator.TONE_CDMA_HIGH_L else ToneGenerator.TONE_CDMA_ANSWER
+                ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME)
+                    .startTone(toneType, 100) // 0.1초 동안 지속됨
 
             }
         }
@@ -122,6 +137,8 @@ class StopWatchActivity : AppCompatActivity() {
 
         binding.groupCountdown.isVisible = true
         initCountdownViews()
+
+        binding.linearLapContainer.removeAllViews()
     }
 
     private fun pause() {
@@ -130,7 +147,28 @@ class StopWatchActivity : AppCompatActivity() {
     }
 
     private fun lap() {
+        // 시작 안된 상태
+        if (currentDeciSecond == 0) return
 
+        val container = binding.linearLapContainer
+        TextView(this).apply {
+            textSize = 20f
+            gravity = Gravity.CENTER
+
+            val minutes = currentDeciSecond.div(10) / 60
+            val seconds = currentDeciSecond.div(10) % 60
+            val deciSeconds = currentDeciSecond % 10
+            text = "${container.childCount.inc()}. " + String.format(
+                "%02d:%02d %01d",
+                minutes,
+                seconds,
+                deciSeconds
+            )
+            // 1. 01:03 0
+            setPadding(30)
+        }.let { laptv ->
+            container.addView(laptv, 0) // 새로 추가될 때마다 맨 위로 오게
+        }
     }
 
     private fun showCountDownSettingDialog() {
