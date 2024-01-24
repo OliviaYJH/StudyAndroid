@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/app/navigationgraph" />
             <option value="$PROJECT_DIR$/app/stopwatch" />
             <option value="$PROJECT_DIR$/app/widget" />
+            <option value="$PROJECT_DIR$/app/wordbook" />
           </set>
         </option>
       </GradleProjectSettings>
