@@ -26,9 +26,9 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
     }
 
     private fun initRecyclerView() {
-        val dummyList = makeDummyList()
+        //val dummyList = makeDummyList()
 
-        wordAdapter = WordAdapter(dummyList, this)
+        wordAdapter = WordAdapter(mutableListOf(), this)
         // scope function 사용
         binding.rvWord.apply {
             // recyclerView에 adapter 연결
