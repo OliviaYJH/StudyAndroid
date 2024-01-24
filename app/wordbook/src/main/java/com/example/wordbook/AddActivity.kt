@@ -7,6 +7,7 @@ import android.provider.UserDictionary.Words.addWord
 import android.util.Log
 import android.widget.Toast
 import androidx.core.view.children
+import androidx.core.widget.addTextChangedListener
 import com.example.wordbook.databinding.ActivityAddBinding
 import com.example.wordbook.room.WordDatabase
 import com.google.android.material.chip.Chip
@@ -37,6 +38,16 @@ class AddActivity : AppCompatActivity() {
         binding.chipGroupType.apply {
             types.forEach { type ->
                 addView(createChip(type))
+            }
+        }
+
+        binding.inputtextWord.addTextChangedListener {
+            it?.let { text ->
+                binding.inputlayoutWord.error = when(text.length) {
+                    0 -> "값을 입력해주세요"
+                    1 -> "2자 이상을 입력해주세요"
+                    else -> null
+                }
             }
         }
 
