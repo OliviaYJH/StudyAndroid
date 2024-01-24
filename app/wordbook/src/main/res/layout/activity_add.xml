@@ -30,16 +30,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         app:counterEnabled="true"
         app:counterMaxLength="30"
-        app:errorEnabled="true"
-        >
-
+        app:errorEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputtext_word"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="단어"
             />
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- 뜻 입력 부분 -->
@@ -52,14 +49,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputlayout_word"
         app:counterEnabled="true">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputtext_mean"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="뜻"
-            />
-
+            android:hint="뜻" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Chip 사용 -->
@@ -68,8 +62,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/inputlayout_mean"
-        android:layout_marginTop="16dp">
-    </com.google.android.material.chip.ChipGroup>
+        android:layout_marginTop="16dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"/>
 
     <Button
         android:id="@+id/btn_finish_add"
