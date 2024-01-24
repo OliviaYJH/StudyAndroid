@@ -1,11 +1,13 @@
 package com.example.wordbook
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wordbook.databinding.ActivityMainBinding
@@ -17,6 +19,7 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
 
     private lateinit var wordAdapter: WordAdapter
     private var selectedWord: Word? = null
+
     private val updateAddWordResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -27,6 +30,18 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private val updateEditWordResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // 돌아오면 화면 update
+        val editWord = result.data?.getParcelableExtra<Word>("editWord") ?: null
+        if (result.resultCode == RESULT_OK && editWord != null) {
+            updateEditWord(editWord)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,6 +51,7 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
         initRecyclerView()
         navigateToAdd()
         deleteWord()
+        editWord()
     }
 
     private fun initRecyclerView() {
@@ -131,6 +147,30 @@ class MainActivity : AppCompatActivity(), WordAdapter.ItemClickListener {
                     }
                 }
             }.start()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun editWord() {
+        binding.btnEdit.setOnClickListener {
+            if(selectedWord == null) return@setOnClickListener
+
+            val intent = Intent(this, AddActivity::class.java).putExtra("originData", selectedWord)
+            updateEditWordResult.launch(intent)
+        }
+    }
+
+    private fun updateEditWord(word: Word) {
+        val index = wordAdapter.list.indexOfFirst { it.id == word.id }
+        wordAdapter.list.set(index, word)
+
+        runOnUiThread {
+            selectedWord = word
+
+            wordAdapter.notifyItemChanged(index)
+
+            binding.tvWord.text = word.word
+            binding.tvMean.text = word.mean
         }
     }
 

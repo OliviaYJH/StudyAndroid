@@ -3,8 +3,10 @@ package com.example.wordbook
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.UserDictionary.Words.addWord
 import android.util.Log
 import android.widget.Toast
+import androidx.core.view.children
 import com.example.wordbook.databinding.ActivityAddBinding
 import com.example.wordbook.room.WordDatabase
 import com.google.android.material.chip.Chip
@@ -13,6 +15,8 @@ class AddActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityAddBinding
     private val binding get() = _binding
 
+    private var originData: Word? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -20,7 +24,10 @@ class AddActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initViews()
-        binding.btnFinishAdd.setOnClickListener { addWord() }
+        binding.btnFinishAdd.setOnClickListener {
+            if (originData == null) addWord()
+            else edit()
+        }
     }
 
     // command + shift + v => 그동안 clipboard 복사한 것 확인 가능
@@ -31,6 +38,16 @@ class AddActivity : AppCompatActivity() {
             types.forEach { type ->
                 addView(createChip(type))
             }
+        }
+
+        originData = intent.getParcelableExtra("originData")
+        originData?.let { word ->
+            binding.inputtextWord.setText(word.word)
+            binding.inputtextMean.setText(word.mean)
+
+            val selectedChip =
+                binding.chipGroupType.children.firstOrNull { (it as Chip).text == word.type } as? Chip
+            selectedChip?.isChecked = true
         }
     }
 
@@ -49,8 +66,6 @@ class AddActivity : AppCompatActivity() {
         val mean = binding.inputtextMean.text.toString()
         val type = findViewById<Chip>(binding.chipGroupType.checkedChipId).text.toString()
 
-        Log.d("wordssss", "$text $mean $type")
-
         val word = Word(text, mean, type)
 
         Thread { // DB에 접근할 때 UI Thread 와는 별개로 작동해야 함 - 아니면 작동시간이 오래 걸려서 ANR이 발생할 수 있음
@@ -64,9 +79,34 @@ class AddActivity : AppCompatActivity() {
             }
 
             val intent = Intent().putExtra("isUpdated", true)
-            setResult(RESULT_OK, intent) // Main Activity에서 registerForActivityResult()가 돌아옴을 들을 수 있음
+            setResult(
+                RESULT_OK,
+                intent
+            ) // Main Activity에서 registerForActivityResult()가 돌아옴을 들을 수 있음
 
             finish()
+        }.start()
+    }
+
+    private fun edit() {
+        val text = binding.inputtextWord.text.toString()
+        val mean = binding.inputtextMean.text.toString()
+        val type = findViewById<Chip>(binding.chipGroupType.checkedChipId).text.toString()
+
+        val editWord = originData?.copy(text, mean, type)
+
+        Thread {
+            editWord?.let { // word가 nullable하기 때문
+                WordDatabase.getInstance(this)?.wordDao()?.update(editWord)
+
+                val intent = Intent().putExtra("editWord", editWord)
+                setResult(RESULT_OK, intent)
+                runOnUiThread {
+                    Toast.makeText(this, "수정 완료", Toast.LENGTH_SHORT).show()
+                }
+
+                finish()
+            }
         }.start()
     }
 }
