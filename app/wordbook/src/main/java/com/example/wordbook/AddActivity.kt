@@ -1,5 +1,6 @@
 package com.example.wordbook
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -61,6 +62,9 @@ class AddActivity : AppCompatActivity() {
             runOnUiThread { // WorkThread에서 접근하지 않도록 runOnUIThread 안에 넣기
                 Toast.makeText(this, "저장 완료", Toast.LENGTH_SHORT).show()
             }
+
+            val intent = Intent().putExtra("isUpdated", true)
+            setResult(RESULT_OK, intent) // Main Activity에서 registerForActivityResult()가 돌아옴을 들을 수 있음
 
             finish()
         }.start()
