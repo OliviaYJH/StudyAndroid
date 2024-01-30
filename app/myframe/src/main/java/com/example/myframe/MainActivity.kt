@@ -1,16 +1,29 @@
 package com.example.myframe
 
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myframe.databinding.ActivityMainBinding
+import java.util.Collections.addAll
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageAdapter: ImageAdapter
+
+    // 이미지를 한번에 여러갤르 가져올 예정
+    private val imageLoadLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
+            updateImages(uriList)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -18,6 +31,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         clickLoadImage()
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        imageAdapter = ImageAdapter(object : ImageAdapter.ItemClickListener{
+            override fun onLoadMoreClick() {
+                checkPermissions()
+            }
+
+        })
+
+        binding.rvImage.apply {
+            adapter = imageAdapter
+            layoutManager = GridLayoutManager(context, 2)
+        }
     }
 
     private fun clickLoadImage() {
@@ -70,7 +98,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadImage() {
-        Toast.makeText(this, "loadImage", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "loadImage", Toast.LENGTH_SHORT).show()
+
+        // image 타입으로 된 모든 파일을 열어서 가져올 것임
+        imageLoadLauncher.launch("image/*")
+    }
+
+    private fun updateImages(uriList: List<Uri>) {
+        //Log.i("updateImages", "$uriList")
+        val images = uriList.map { ImageItems.FrameImage(it) }
+        val updatedImages = imageAdapter.currentList.toMutableList().apply { addAll(images) }
+        imageAdapter.submitList(updatedImages)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            REQUEST_READ_EXTERNAL_STORAGE -> {
+                val resultCode = grantResults.firstOrNull() ?: PackageManager.PERMISSION_DENIED
+                if (resultCode == PackageManager.PERMISSION_GRANTED) {
+                    // 허용된 상태
+                    loadImage()
+                }
+            }
+        }
     }
 
 
