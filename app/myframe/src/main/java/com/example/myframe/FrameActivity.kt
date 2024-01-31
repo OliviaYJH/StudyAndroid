@@ -3,6 +3,7 @@ package com.example.myframe
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import com.example.myframe.databinding.ActivityFrameBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -15,7 +16,7 @@ class FrameActivity : AppCompatActivity() {
         binding = ActivityFrameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // toolbar
+        // toolbar 구성
         binding.toolbar.apply {
             title = "나만의 앨범"
             setSupportActionBar(this)
@@ -36,5 +37,14 @@ class FrameActivity : AppCompatActivity() {
             binding.vpFrame.currentItem = tab.position
         }.attach()
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            } else -> super.onOptionsItemSelected(item)
+        }
     }
 }
