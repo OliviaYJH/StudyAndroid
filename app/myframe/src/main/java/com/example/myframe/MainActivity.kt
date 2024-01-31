@@ -1,5 +1,6 @@
 package com.example.myframe
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageAdapter: ImageAdapter
 
-    // 이미지를 한번에 여러갤르 가져올 예정
+    // 이미지를 한번에 여러개를 가져올 예정
     private val imageLoadLauncher =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
             updateImages(uriList)
@@ -27,11 +28,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // toolbar
+        binding.toolbar.apply {
+            title = "사진 가져오기"
+            setSupportActionBar(this)
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         clickLoadImage()
         initRecyclerView()
+        navigateToFrameActivity()
+    }
+
+    private fun navigateToFrameActivity() {
+        binding.btnNavigateFrameActivity.setOnClickListener {
+            val images = imageAdapter.currentList.filterIsInstance<ImageItems.FrameImage>().map { it.uri.toString() }.toTypedArray()
+
+            val intent = Intent(this, FrameActivity::class.java)
+                .putExtra("images", images)
+            startActivity(intent)
+        }
     }
 
     private fun initRecyclerView() {
