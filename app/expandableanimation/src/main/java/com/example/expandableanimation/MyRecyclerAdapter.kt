@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expandableanimation.databinding.ItemNewRecyclerBinding
 
-class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder>() {
+class MyRecyclerAdapter() : RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder>() {
     var myList = arrayListOf<MyData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -40,6 +42,24 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder>()
                     layoutExpand
                 )
                 layoutExpand.isVisible = show
+
+                getDetails()
+            }
+        }
+
+        private fun getDetails() {
+            with(binding) {
+                val detailAdapter = MyDetailAdapter()
+
+                val myDetailList: ArrayList<DetailData> = ArrayList()
+                myDetailList.add(DetailData("one"))
+                myDetailList.add(DetailData("two"))
+                myDetailList.add(DetailData("three"))
+
+                rvDetail.adapter = detailAdapter
+                rvDetail.layoutManager = LinearLayoutManager(itemView.context)
+                detailAdapter.myDetailList = myDetailList
+                detailAdapter.notifyDataSetChanged()
             }
         }
 
@@ -61,6 +81,5 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder>()
 }
 
 data class MyData(
-    var title: String,
-    var detail: String
+    var title: String
 )

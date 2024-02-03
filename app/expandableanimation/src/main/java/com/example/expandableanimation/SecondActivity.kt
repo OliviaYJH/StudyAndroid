@@ -24,11 +24,11 @@ class SecondActivity : AppCompatActivity() {
             val myAdapter = MyRecyclerAdapter()
 
             val myList: ArrayList<MyData> = ArrayList()
-            myList.add(MyData("First", "detail1"))
-            myList.add(MyData("Second", "detail2"))
-            myList.add(MyData("Third", "detail3"))
-            myList.add(MyData("Fourth", "detail4"))
-            myList.add(MyData("Fifth", "detail5"))
+            myList.add(MyData("First"))
+            myList.add(MyData("Second"))
+            myList.add(MyData("Third"))
+            myList.add(MyData("Fourth"))
+            myList.add(MyData("Fifth"))
 
             rv.adapter = myAdapter
             rv.layoutManager = LinearLayoutManager(applicationContext)
