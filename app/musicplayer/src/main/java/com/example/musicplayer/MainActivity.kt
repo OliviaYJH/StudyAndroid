@@ -1,5 +1,6 @@
 package com.example.musicplayer
 
+import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,22 +23,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mediaPlayerPlay() {
-        Log.i("mediaPlayer", "start")
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(this, R.raw.temp).apply {
-                isLooping = true // 계속 반복
-            }
-        }
-        mediaPlayer?.start()
+        // service 시작
+        val intent = Intent(this, MediaPlayerService::class.java)
+            .apply { action = MEDIA_PLAYER_PLAY }
+        startService(intent)
     }
 
     private fun mediaPlayerPause() {
-        mediaPlayer?.pause()
+        val intent = Intent(this, MediaPlayerService::class.java)
+            .apply { action = MEDIA_PLAYER_PAUSE }
+        startService(intent)
     }
 
     private fun mediaPlayerStop() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
+        val intent = Intent(this, MediaPlayerService::class.java)
+            .apply { action = MEDIA_PLAYER_STOP }
+        startService(intent)
     }
 }
