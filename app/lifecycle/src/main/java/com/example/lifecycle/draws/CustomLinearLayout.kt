@@ -21,9 +21,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    /*override fun onDraw(canvas: Canvas?) {
         Log.i("그리기", "CustomLinearLayout - onDraw")
         super.onDraw(canvas)
 
-    }
+    }*/
 }
