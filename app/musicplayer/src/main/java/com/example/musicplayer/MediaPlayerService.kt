@@ -89,7 +89,7 @@ class MediaPlayerService : Service() {
             .setContentText("음원이 재생 중 입니다..")
             .build()
 
-        
+
         startForeground(100, notification)
     }
 
@@ -125,5 +125,15 @@ class MediaPlayerService : Service() {
         }
 
         return super.onStartCommand(intent, flags, startId) // return 값으로 integer값 반환
+    }
+
+    override fun onDestroy() {
+        mediaPlayer?.apply {
+            stop()
+            release()
+        }
+        mediaPlayer = null
+        
+        super.onDestroy()
     }
 }
