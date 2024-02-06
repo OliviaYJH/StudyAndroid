@@ -2,12 +2,14 @@ package com.example.musicplayer
 
 import android.app.*
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.Icon
 import android.media.MediaPlayer
 import android.os.IBinder
 
 class MediaPlayerService : Service() {
     private var mediaPlayer: MediaPlayer? = null
+    private val receiver = LowBatteryReceiver()
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -17,6 +19,7 @@ class MediaPlayerService : Service() {
         super.onCreate()
 
         createNotificationChannel()
+        initReceiver()
 
         // 화면에 사용할 아이콘들
         val playIcon = Icon.createWithResource(baseContext, R.drawable.ic_play)
@@ -102,6 +105,15 @@ class MediaPlayerService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    private fun initReceiver() {
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_BATTERY_LOW)
+        }
+        // 등록
+        registerReceiver(receiver, filter)
+    }
+
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // service가 실행되고 onCreate가 된 다음 바로 불리는 곳
         when (intent?.action) {
@@ -133,7 +145,9 @@ class MediaPlayerService : Service() {
             release()
         }
         mediaPlayer = null
-        
+
+        unregisterReceiver(receiver)
+
         super.onDestroy()
     }
 }
