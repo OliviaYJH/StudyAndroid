@@ -1,14 +1,16 @@
 package com.example.webtoon
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import android.webkit.WebViewClient
 import android.widget.TextView
+import com.example.webtoon.WebViewFragment.Companion.SHARED_PREFERENCE
 import com.example.webtoon.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnTabLayoutNameChanged {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,19 +19,29 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val sharedPreference = getSharedPreferences(SHARED_PREFERENCE, Context.MODE_PRIVATE)
+        val tab0 = sharedPreference?.getString("tab0_name", "월요웹툰")
+        val tab1 = sharedPreference?.getString("tab1_name", "화요웹툰")
+        val tab2 = sharedPreference?.getString("tab2_name", "수요웹툰")
+
+
         // viewpager2 설정
         binding.viewPager.adapter = ViewPagerAdapter(this)
 
         // tablayout 연결
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             run {
-                //tab.text = "position $position"
+                tab.text = when(position) {
+                    0 -> tab0
+                    1 -> tab1
+                    else -> tab2
+                }
 
-                val textView = TextView(this)
+                /*val textView = TextView(this)
                 textView.text = "$position"
                 textView.gravity = Gravity.CENTER
 
-                tab.customView = textView // 위에 작성한 뷰가 넘어감
+                tab.customView = textView // 위에 작성한 뷰가 넘어감*/
             }
         }.attach()
 
@@ -69,5 +81,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun nameChanged(position: Int, name: String) {
+        val tab = binding.tabLayout.getTabAt(position)
+
+        tab?.text = name
     }
 }
