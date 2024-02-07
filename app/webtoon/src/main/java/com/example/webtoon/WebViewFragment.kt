@@ -8,7 +8,7 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.example.webtoon.databinding.FragmentWebviewBinding
 
-class WebViewFragment: Fragment() {
+class WebViewFragment : Fragment() {
     private lateinit var binding: FragmentWebviewBinding
 
     override fun onCreateView( // view가 생성되는 시점
@@ -28,6 +28,15 @@ class WebViewFragment: Fragment() {
         binding.webview.webViewClient = WebtoonWebViewClient(binding.progressBar)
         binding.webview.settings.javaScriptEnabled = true
 
-        binding.webview.loadUrl("https://comic.naver.com/") // 이것만 작성하면 웹 브라우저에서 뜨게 됨
+        binding.webview.loadUrl("https://comic.naver.com/webtoon/detail?titleId=679519&no=3&week=finish") // 이것만 작성하면 웹 브라우저에서 뜨게 됨
+    }
+
+    fun canGoBack(): Boolean {
+        // main activity에서 webview에 대한 canGoBack 조회를 할 수 있도록
+        return binding.webview.canGoBack()
+    }
+
+    fun goBack() {
+        binding.webview.goBack()
     }
 }

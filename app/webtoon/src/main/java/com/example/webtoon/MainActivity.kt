@@ -29,4 +29,25 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    override fun onBackPressed() {
+        // super.onBackPressed() 활성화하면 main에서 보여지는 웹툰 화면에서 뒤로가기 버튼을 누르면 아예 앱이 꺼짐
+        // 이를 방지하기 위해 back button을 비활성화
+
+        /*
+        MainActivity에서 WebViewFragment 안의 함수를 사용하기 위해
+         supportFragmentManager 안의 WebViewFragment를 꺼내오기
+         */
+
+        val currentFragment = supportFragmentManager.fragments.first()
+        if (currentFragment is WebViewFragment) {
+            if (currentFragment.canGoBack()) {
+                currentFragment.goBack()
+            } else {
+                super.onBackPressed() // 뒤로 갈 페이지가 없으면 앱 종료
+            }
+        } else {
+            super.onBackPressed()
+        }
+    }
 }

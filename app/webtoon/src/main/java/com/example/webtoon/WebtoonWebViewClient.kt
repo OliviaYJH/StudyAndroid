@@ -36,6 +36,8 @@ class WebtoonWebViewClient(private val progressbar: ProgressBar): WebViewClient(
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         // 페이지 로딩 여부 결정함수 -> true이면 안띄움, false는 띄움
-        return false
+
+        return !(request != null && request.url.toString().contains("comic.naver.com/"))
+        // 이렇게 작성하면 네이버 웹툰 외의 페이지로는 이동이 불가능해짐
     }
 }
