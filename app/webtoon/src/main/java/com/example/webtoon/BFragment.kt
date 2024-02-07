@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.webtoon.databinding.FragmentSecondBinding
 
-class BFragment: Fragment() {
+class BFragment(): Fragment() {
     private lateinit var binding: FragmentSecondBinding
 
     override fun onCreateView(

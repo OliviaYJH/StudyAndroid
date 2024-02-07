@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 textView.text = "$position"
                 textView.gravity = Gravity.CENTER
 
-                tab.customView = textView // 위에 작성한 뷰가 넘어감 
+                tab.customView = textView // 위에 작성한 뷰가 넘어감
             }
         }.attach()
 
