@@ -25,9 +25,9 @@ class WebViewFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 앱 내부에서 띄우기
-        binding.webview.webViewClient = WebViewClient()
+        binding.webview.webViewClient = WebtoonWebViewClient(binding.progressBar)
         binding.webview.settings.javaScriptEnabled = true
 
-        binding.webview.loadUrl("https://google.com") // 이것만 작성하면 웹 브라우저에서 뜨게 됨
+        binding.webview.loadUrl("https://comic.naver.com/") // 이것만 작성하면 웹 브라우저에서 뜨게 됨
     }
 }

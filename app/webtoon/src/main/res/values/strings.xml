@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Webtoon</string>
+    <string name="text_back_to_last">마지막 시점으로 돌아가기</string>
+    <string name="text_change_tab_name">탭 이름 변경하기</string>
 </resources>
