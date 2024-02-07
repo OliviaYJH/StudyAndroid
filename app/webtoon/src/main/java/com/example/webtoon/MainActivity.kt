@@ -2,8 +2,11 @@ package com.example.webtoon
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.webkit.WebViewClient
+import android.widget.TextView
 import com.example.webtoon.databinding.ActivityMainBinding
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -14,7 +17,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btn1.setOnClickListener {
+        // viewpager2 설정
+        binding.viewPager.adapter = ViewPagerAdapter(this)
+
+        // tablayout 연결
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            run {
+                //tab.text = "position $position"
+
+                val textView = TextView(this)
+                textView.text = "$position"
+                textView.gravity = Gravity.CENTER
+
+                tab.customView = textView // 위에 작성한 뷰가 넘어감 
+            }
+        }.attach()
+
+
+        /*binding.btn1.setOnClickListener {
             supportFragmentManager.beginTransaction().apply { // 작업 시작
                 replace(R.id.fl_container, WebViewFragment()) // WebViewFragment를 항상 새로 생성함
                 commit() // 작업 끝남
@@ -27,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                 commit() // 작업 끝남
             }
 
-        }
+        }*/
     }
 
     override fun onBackPressed() {
@@ -39,7 +59,7 @@ class MainActivity : AppCompatActivity() {
          supportFragmentManager 안의 WebViewFragment를 꺼내오기
          */
 
-        val currentFragment = supportFragmentManager.fragments.first()
+        val currentFragment = supportFragmentManager.fragments[binding.viewPager.currentItem]
         if (currentFragment is WebViewFragment) {
             if (currentFragment.canGoBack()) {
                 currentFragment.goBack()
