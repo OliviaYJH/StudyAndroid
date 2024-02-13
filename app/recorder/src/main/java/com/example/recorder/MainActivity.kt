@@ -3,11 +3,13 @@ package com.example.recorder
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.system.Os.stat
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -18,6 +20,7 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var recorder: MediaRecorder? = null
+    private var player: MediaPlayer? = null
     private var fileName: String = ""
     private var state: State = State.RELEASE
 
@@ -57,7 +60,27 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+        }
 
+        binding.btnPlay.setOnClickListener {
+            when (state) {
+                State.RELEASE -> {
+                    // 녹음 상태로 이동
+                    onPlay(true)
+                } else -> {
+                    // do nothing
+                }
+            }
+        }
+
+        binding.btnStop.setOnClickListener {
+            when (state) {
+                State.RECORDING -> {
+                    onPlay(false)
+                } else -> {
+                    // do nothing
+                }
+            }
         }
     }
 
@@ -95,6 +118,12 @@ class MainActivity : AppCompatActivity() {
         startRecording()
     } else {
         stopRecording()
+    }
+
+    private fun onPlay(start: Boolean) = if (start) {
+        startPlaying()
+    } else {
+        stopPlaying()
     }
 
     private fun startRecording() {
@@ -141,6 +170,40 @@ class MainActivity : AppCompatActivity() {
             ColorStateList.valueOf(ContextCompat.getColor(this, R.color.red))
         binding.btnPlay.isEnabled = true
         binding.btnPlay.alpha = 1.0f
+    }
+
+    private fun startPlaying() {
+        state = State.PLAYING
+
+        player = MediaPlayer().apply {
+            try {
+                setDataSource(fileName)
+                prepare()
+            } catch (e: IOException) {
+                Log.e("APP", "media player prepare fail $e")
+            }
+
+            start()
+        }
+
+        player?.setOnCompletionListener {
+            // 파일 재생이 끝났을 때 실행됨
+            stopPlaying()
+        }
+
+        // record 버튼 비활성화
+        binding.btnRecord.isEnabled = false
+        binding.btnRecord.alpha = 0.3f
+    }
+
+    private fun stopPlaying() {
+        state = State.RELEASE
+
+        player?.release()
+        player = null
+
+        binding.btnRecord.isEnabled = true
+        binding.btnRecord.alpha = 1.0f
     }
 
     private fun showPermissionRationalDialog() {
