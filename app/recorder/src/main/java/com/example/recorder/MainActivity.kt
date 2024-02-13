@@ -9,7 +9,6 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.system.Os.stat
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -17,12 +16,14 @@ import androidx.core.content.ContextCompat
 import com.example.recorder.databinding.ActivityMainBinding
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnTimerTickListener {
     private lateinit var binding: ActivityMainBinding
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
     private var fileName: String = ""
     private var state: State = State.RELEASE
+
+    private lateinit var timer: Timer
 
     companion object {
         const val REQUEST_RECORD_AUDIO_CODE = 200
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
+        timer = Timer(this)
 
         // 권한 요청
         binding.btnRecord.setOnClickListener {
@@ -67,17 +69,23 @@ class MainActivity : AppCompatActivity() {
                 State.RELEASE -> {
                     // 녹음 상태로 이동
                     onPlay(true)
-                } else -> {
+                }
+
+                else -> {
                     // do nothing
                 }
             }
         }
+        binding.btnPlay.isEnabled = false
+        binding.btnPlay.alpha = 0.3f
 
         binding.btnStop.setOnClickListener {
             when (state) {
                 State.RECORDING -> {
                     onPlay(false)
-                } else -> {
+                }
+
+                else -> {
                     // do nothing
                 }
             }
@@ -144,6 +152,9 @@ class MainActivity : AppCompatActivity() {
             start() // 시작
         }
 
+        binding.waveFormView.clearData()
+        timer.start()
+
         // 버튼 변경
         binding.btnRecord.setImageDrawable(
             ContextCompat.getDrawable(this, R.drawable.ic_stop)
@@ -161,6 +172,7 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+        timer.stop()
         state = State.RELEASE
 
         binding.btnRecord.setImageDrawable(
@@ -186,6 +198,9 @@ class MainActivity : AppCompatActivity() {
             start()
         }
 
+        binding.waveFormView.clearWave()
+        timer.start()
+
         player?.setOnCompletionListener {
             // 파일 재생이 끝났을 때 실행됨
             stopPlaying()
@@ -201,6 +216,8 @@ class MainActivity : AppCompatActivity() {
 
         player?.release()
         player = null
+
+        timer.stop()
 
         binding.btnRecord.isEnabled = true
         binding.btnRecord.alpha = 1.0f
@@ -267,6 +284,20 @@ class MainActivity : AppCompatActivity() {
 
                 showPermissionSettingDialog()
             }
+        }
+    }
+
+    override fun onTick(duration: Long) {
+        val millisecond = duration % 1000
+        val second = (duration / 1000) % 60
+        val minute = (duration / 1000 / 60)
+
+        binding.tvTimer.text = String.format("%02d:%02d.%02d", minute, second, millisecond / 10)
+
+        if (state == State.PLAYING) {
+            binding.waveFormView.replayAmplitude()
+        } else if (state == State.RECORDING) {
+            binding.waveFormView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
         }
     }
 }
