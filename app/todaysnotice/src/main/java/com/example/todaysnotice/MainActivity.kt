@@ -6,43 +6,42 @@ import android.util.Log
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.PrintWriter
+import java.lang.Exception
+import java.net.HttpURLConnection
 import java.net.ServerSocket
+import java.net.Socket
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // network는 main Thread에서 작동할 수 없도록 되어 있음 -> Thread 이용해 새로운 스레드 생성
         Thread {
-            val port = 8080
-            val server = ServerSocket(port)
+            try {
+                val socket = Socket("10.0.2.2", 8080) // 애뮬레이터에서 실행
+                val printer = PrintWriter(socket.getOutputStream())
+                val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
 
-            val socket = server.accept()
-            //socket.getInputStream() // client로부터 들어오는 stream = client의 socket.outputStream
-            //socket.getOutputStream() // client에게 데이터를 주는 stream = client의 socket.inputStream
+                // 쓰기
+                printer.println("GET / HTTP/1.1")
+                printer.println("Host: 127.0.0.1:8080")
+                printer.println("User-Agent: android")
+                printer.println("\r\n")
+                printer.flush()
 
-            val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
-            val printer = PrintWriter(socket.getOutputStream())
+                // client가 읽기
+                var input: String? = "-1"
+                while (input != null) input = reader.readLine()
 
-            var input: String? = "-1"
-            while (input != null && input != "") {
-                input = reader.readLine() // 데이터 읽어옴
+                reader.close()
+                printer.close()
+                socket.close()
+
+            } catch (e: Exception) {
+                Log.e("Client", e.toString())
             }
-
-            Log.e("SERVER", "READ DATA $input")
-            printer.println("HTTP/1.1 200 OK") // 규격 부분 - 정상 데이터 수신 및 정상 데이터 전송할 것임을 알림
-            printer.println("Content-Type: text/html\r\n") // Header 부분
-            // Body 부분
-            printer.println("<h1>Hello World</h1>")
-            printer.println("\r\n")
-            printer.flush() // 잔여 데이터 배출
-
-            printer.close() // 끊음
-            reader.close()
-            socket.close()
         }.start()
-
 
     }
 }
