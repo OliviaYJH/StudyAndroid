@@ -32,7 +32,7 @@ fun main() {
             printer.println("HTTP/1.1 200 OK") // 규격 부분 - 정상 데이터 수신 및 정상 데이터 전송할 것임을 알림
             printer.println("Content-Type: text/html\r\n") // Header 부분
             // Body 부분
-            printer.println("<h1>Hello World</h1>")
+            printer.println("{\"message\":\"Hello World\"}")
             printer.println("\r\n")
             printer.flush() // 잔여 데이터 배출
 
