@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/app/myframe" />
             <option value="$PROJECT_DIR$/app/navigationgraph" />
             <option value="$PROJECT_DIR$/app/recorder" />
+            <option value="$PROJECT_DIR$/app/repository" />
             <option value="$PROJECT_DIR$/app/stopwatch" />
             <option value="$PROJECT_DIR$/app/todaysnotice" />
             <option value="$PROJECT_DIR$/app/wearable" />
