@@ -1,8 +1,13 @@
 package com.example.news
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.news.databinding.ActivityMainBinding
 import com.example.news.model.NewsRss
@@ -35,7 +40,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        newsAdapter = NewsAdapter()
+        newsAdapter = NewsAdapter { url ->
+            startActivity(
+                Intent(this, WebViewActivity::class.java).apply {
+                    putExtra("url", url)
+                }
+            )
+        }
         val newsService = retrofit.create(NewsService::class.java)
 
         // recyclerview
@@ -79,6 +90,24 @@ class MainActivity : AppCompatActivity() {
             newsService.getSportsNews().submitList()
         }
 
+        binding.etSearch.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.chipGroup.clearCheck()
+
+                binding.etSearch.clearFocus()
+
+                // 키보드 내리기
+                val inputMethodService =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodService.hideSoftInputFromWindow(v.windowToken, 0)
+
+                newsService.search(binding.etSearch.text.toString()).submitList()
+
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+
         newsService.mainFeed().submitList()
 
     }
@@ -92,6 +121,8 @@ class MainActivity : AppCompatActivity() {
 
                 val list = response.body()?.channel?.items.orEmpty().transform()
                 newsAdapter.submitList(list)
+
+                binding.animNotFound.isVisible = list.isEmpty()
 
                 list.forEachIndexed { index, news ->
                     Thread {

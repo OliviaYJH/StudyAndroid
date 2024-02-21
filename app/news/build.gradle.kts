@@ -60,4 +60,7 @@ dependencies {
 
     implementation ("org.jsoup:jsoup:1.17.2") // jsoup
     implementation("com.github.bumptech.glide:glide:4.14.2")
+
+    // lottie
+    implementation("com.airbnb.android:lottie:5.2.0")
 }
