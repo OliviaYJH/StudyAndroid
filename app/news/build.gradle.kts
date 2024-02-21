@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ir.backend.js.compile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -49,10 +51,13 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+    implementation("com.tickaroo.tikxml:annotation:0.8.13")
     implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
-    implementation ("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    kapt("com.tickaroo.tikxml:auto-value-tikxml:0.8.13")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     kapt("com.squareup.retrofit2:converter-gson:2.9.0") //Tikxml
 
+    implementation ("org.jsoup:jsoup:1.17.2") // jsoup
+    implementation("com.github.bumptech.glide:glide:4.14.2")
 }
