@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudyAndroid">
         <activity
-            android:name=".MVCActivity"
+            android:name=".mvc.MVCActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,8 +1,10 @@
 package com.example.studypattern
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.studypattern.databinding.ActivityMainBinding
+import com.example.studypattern.mvc.MVCActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openMVC() {
-
+        startActivity(Intent(this, MVCActivity::class.java))
     }
 
     fun openMVP() {
