@@ -4,7 +4,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import coil.load
-import com.example.studypattern.databinding.ActivityMvcactivityBinding
+import com.example.studypattern.databinding.ActivityMvcBinding
 import com.example.studypattern.mvc.provider.ImageProvider
 
 /*
@@ -31,7 +31,7 @@ MVC 패턴
  */
 
 class MVCActivity : AppCompatActivity(), ImageProvider.Callback {
-    private lateinit var binding: ActivityMvcactivityBinding
+    private lateinit var binding: ActivityMvcBinding
 
     // model과 provider를 직접 참조
     // 하지만 model과 provider 안에서는 activity의 상황을 알 수 없음 => 다른쪽에서 재사용 가능
@@ -41,8 +41,8 @@ class MVCActivity : AppCompatActivity(), ImageProvider.Callback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMvcactivityBinding.inflate(layoutInflater).also {
-            setContentView(binding.root)
+        binding = ActivityMvcBinding.inflate(layoutInflater).also {
+            setContentView(it.root)
             it.view = this
         }
 
