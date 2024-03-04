@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.studypattern.databinding.ActivityMainBinding
 import com.example.studypattern.mvc.MVCActivity
+import com.example.studypattern.mvp.MVPActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -24,7 +25,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openMVP() {
-
+        // Activity와 Presenter는 항상 1:1 구조!
+        startActivity(Intent(this, MVPActivity::class.java))
     }
 
     fun openMVVM() {
